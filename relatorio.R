@@ -23,10 +23,25 @@ outliers_iqr <- function(x) #detectar outliers usando método iqr
   limites <- c(q1 - 1.5 * iqr, q3 + 1.5 * iqr)
   which(x < limites[1] | x > limites[2])
 }
-print("outliers:")
+
 outliers_consumo <- outliers_iqr(dados$consumo_energia)
+outliers_moradores <- outliers_iqr(dados$num_moradores)
+outliers_area <- outliers_iqr(dados$area_m2)
+outliers_temperatura <- outliers_iqr(dados$temperatura_media)
+outliers_renda <- outliers_iqr(dados$renda_familiar)
+
+print("outliers consumo:")
 print(cbind(indice = outliers_consumo, 
       valor = dados$consumo_energia[outliers_consumo]))
-boxplot(dados$consumo_energia, 
-        main = "Consumo de energia - Outliers",
-        ylab = "kWh")
+print("outliers moradores:")
+print(cbind(indice = outliers_moradores, 
+      valor = dados$num_moradores[outliers_moradores]))
+print("outliers área:")
+print(cbind(indice = outliers_area, 
+      valor = dados$area_m2[outliers_area]))
+print("outliers temperatura:")
+print(cbind(indice = outliers_temperatura, 
+      valor = dados$temperatura_media[outliers_temperatura]))
+print("outliers renda:")
+print(cbind(indice = outliers_renda, 
+      valor = dados$renda_familiar[outliers_renda]))
