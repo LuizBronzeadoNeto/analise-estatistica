@@ -14,7 +14,7 @@ print(sum(duplicated(dados)))
 #dados$tipo_construcao
 #dados$isolamento_termico
 #dados$equipamentos_eletro
-
+#dados$potencia_total_equipamentos
 outliers_iqr <- function(x) #detectar outliers usando método iqr
 {
   q1 <- quantile(x, 0.25, na.rm = TRUE)
@@ -29,6 +29,8 @@ outliers_moradores <- outliers_iqr(dados$num_moradores)
 outliers_area <- outliers_iqr(dados$area_m2)
 outliers_temperatura <- outliers_iqr(dados$temperatura_media)
 outliers_renda <- outliers_iqr(dados$renda_familiar)
+outliers_eletro <- outliers_iqr(dados$equipamentos_eletro)
+outliers_pot_eletro <- outliers_iqr(dados$potencia_total_equipamentos)
 
 print("outliers consumo:")
 print(cbind(indice = outliers_consumo, 
@@ -42,6 +44,12 @@ print(cbind(indice = outliers_area,
 print("outliers temperatura:")
 print(cbind(indice = outliers_temperatura, 
       valor = dados$temperatura_media[outliers_temperatura]))
+print("outliers equipamento elétrico:")
+print(cbind(indice = outliers_eletro, 
+      valor = dados$equipamentos_eletro[outliers_eletro]))
+print("outliers potencia equipamento:")
+print(cbind(indice = outliers_pot_eletro, 
+      valor = dados$potencia_total_equipamentos[outliers_pot_eletro]))
 print("outliers renda:")
 print(cbind(indice = outliers_renda, 
       valor = dados$renda_familiar[outliers_renda]))
