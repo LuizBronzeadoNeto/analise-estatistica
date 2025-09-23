@@ -6,12 +6,27 @@ print(colSums(is.na(dados)))
 print("dados duplicados")
 print(sum(duplicated(dados)))
 
-#print(table(dados$num_moradores))
-#print(table(dados$area_m2))
-#print(table(dados$temperatura_media))
-#print(table(dados$renda_familiar))
-#print(table(dados$uso_ar_condicionado))
-#print(table(dados$tipo_construcao))
-#print(table(dados$isolamento_termico))
-#print(table(dados$equipamentos_eletro))
-print(mean(dados$num_moradores))
+#dados$num_moradores
+#dados$area_m2
+#dados$temperatura_media
+#dados$renda_familiar
+#dados$uso_ar_condicionado
+#dados$tipo_construcao
+#dados$isolamento_termico
+#dados$equipamentos_eletro
+
+outliers_iqr <- function(x) #detectar outliers usando método iqr
+{
+  q1 <- quantile(x, 0.25, na.rm = TRUE)
+  q3 <- quantile(x, 0.75, na.rm = TRUE)
+  iqr <- q3 - q1
+  limites <- c(q1 - 1.5 * iqr, q3 + 1.5 * iqr)
+  which(x < limites[1] | x > limites[2])
+}
+print("outliers:")
+outliers_consumo <- outliers_iqr(dados$consumo_energia)
+print(cbind(indice = outliers_consumo, 
+      valor = dados$consumo_energia[outliers_consumo]))
+boxplot(dados$consumo_energia, 
+        main = "Consumo de energia - Outliers",
+        ylab = "kWh")
