@@ -53,3 +53,67 @@ print(cbind(indice = outliers_pot_eletro,
 print("outliers renda:")
 print(cbind(indice = outliers_renda, 
       valor = dados$renda_familiar[outliers_renda]))
+
+par(mfrow = c(3, 3))
+
+hist(dados$consumo_energia, main = "Consumo")
+hist(dados$area_m2, main = "Área")
+hist(dados$num_moradores, main = "número moradores")
+hist(dados$temperatura_media, main = "temperatura")
+hist(dados$renda_familiar, main = "Renda")
+hist(dados$equipamentos_eletro, main = "equipamentos")
+hist(dados$potencia_total_equipamentos, main = "Pot total")
+barplot(table(dados$uso_ar_condicionado), main = "uso ar condicionado")
+barplot(table(dados$tipo_construcao),main = "Distribuição dos tipos de construção")
+
+
+#boxplot(dados$consumo_energia, main = "Consumo")
+#boxplot(dados$area_m2, main = "Área")
+#boxplot(dados$num_moradores, main = "número moradores")
+#boxplot(dados$temperatura_media, main = "Temperatura")
+#boxplot(dados$renda_familiar, main = "Renda")
+#boxplot(dados$equipamentos_eletro, main = "equipamentos")
+#boxplot(dados$potencia_total_equipamentos, main = "pot total")
+
+num_vars <- dados[, c("num_moradores", "area_m2", "temperatura_media",
+                      "renda_familiar", "equipamentos_eletro",
+                      "potencia_total_equipamentos", "consumo_energia")]
+print("matriz de correlação completa:")
+print(cor(num_vars, use = "complete.obs"))
+pairs(num_vars, main = "Matriz de dispersão")
+
+#calculando Variance inflation factor
+vif <- function(modelo) {
+  vifs <- c()
+  X <- model.matrix(modelo)[, -1]  # matriz de preditores (sem intercepto)
+  
+  for (i in 1:ncol(X)) {
+    y <- X[, i]
+    X_aux <- X[, -i, drop = FALSE]
+    modelo_aux <- lm(y ~ X_aux)
+    R2 <- summary(modelo_aux)$r.squared
+    vifs[i] <- 1 / (1 - R2)
+  }
+  
+  names(vifs) <- colnames(X)
+  return(vifs)
+}
+modelo_aux <- lm(consumo_energia ~ num_moradores + area_m2 + temperatura_media +
+                   renda_familiar + equipamentos_eletro +
+                   potencia_total_equipamentos, data = dados)
+
+print("vif:")
+print(vif(modelo_aux))
+
+
+#modelo mlrs
+
+modelo_inicial <- lm(consumo_energia ~ num_moradores + area_m2 + temperatura_media +
+                       renda_familiar + uso_ar_condicionado + tipo_construcao +
+                       + equipamentos_eletro + potencia_total_equipamentos, data = dados)
+
+cat("\n", "\n", "\n")
+print(summary(modelo_inicial))
+par(mfrow=c(2,2))
+plot(modelo_inicial)
+par(mfrow=c(1,1))
