@@ -54,26 +54,27 @@ print("outliers renda:")
 print(cbind(indice = outliers_renda, 
       valor = dados$renda_familiar[outliers_renda]))
 
-par(mfrow = c(3, 3))
+#par(mfrow = c(3, 3)) [Caso seja necessário juntar vários plots em uma img]
+
 #Plots de análise univariável
 hist(dados$consumo_energia, main = "Consumo")
 hist(dados$area_m2, main = "Área")
-hist(dados$num_moradores, main = "número moradores")
-hist(dados$temperatura_media, main = "temperatura")
+hist(dados$num_moradores, main = "Número Moradores")
+hist(dados$temperatura_media, main = "Temperatura")
 hist(dados$renda_familiar, main = "Renda")
-hist(dados$equipamentos_eletro, main = "equipamentos")
-hist(dados$potencia_total_equipamentos, main = "Pot total")
-barplot(table(dados$uso_ar_condicionado), main = "uso ar condicionado")
+hist(dados$equipamentos_eletro, main = "Equipamentos")
+hist(dados$potencia_total_equipamentos, main = "Pot Total")
+barplot(table(dados$uso_ar_condicionado), main = "Uso ar condicionado")
 barplot(table(dados$tipo_construcao),main = "Distribuição dos tipos de construção")
 
 
-#boxplot(dados$consumo_energia, main = "Consumo")
-#boxplot(dados$area_m2, main = "Área")
-#boxplot(dados$num_moradores, main = "número moradores")
-#boxplot(dados$temperatura_media, main = "Temperatura")
-#boxplot(dados$renda_familiar, main = "Renda")
-#boxplot(dados$equipamentos_eletro, main = "equipamentos")
-#boxplot(dados$potencia_total_equipamentos, main = "pot total")
+boxplot(dados$consumo_energia, main = "Consumo")
+boxplot(dados$area_m2, main = "Área")
+boxplot(dados$num_moradores, main = "Número Moradores")
+boxplot(dados$temperatura_media, main = "Temperatura")
+boxplot(dados$renda_familiar, main = "Renda")
+boxplot(dados$equipamentos_eletro, main = "Equipamentos")
+boxplot(dados$potencia_total_equipamentos, main = "Pot Total")
 
 num_vars <- dados[, c("num_moradores", "area_m2", "temperatura_media",
                       "renda_familiar", "equipamentos_eletro",
@@ -108,12 +109,23 @@ print(vif(modelo_aux))
 
 #modelo mlrs
 
-#modelo_inicial <- lm(consumo_energia ~ num_moradores + area_m2 + temperatura_media +
-#                       renda_familiar + uso_ar_condicionado + tipo_construcao +
-#                       + equipamentos_eletro + potencia_total_equipamentos, data = dados)
+modelo_inicial <- lm(consumo_energia ~ num_moradores + area_m2 + temperatura_media +
+                      renda_familiar + uso_ar_condicionado + tipo_construcao +
+                      + equipamentos_eletro + potencia_total_equipamentos, data = dados)
 
 cat("\n", "\n", "\n")
 #selecionando o melhor modelo com stepwise regression
 modelo_inicial <- lm(consumo_energia ~ ., data = dados)
 modelo_step <- step(modelo_inicial, direction = "both")
 print(summary(modelo_step))
+
+lmtest <- "lmtest"
+if (!require(lmtest, character.only = TRUE)) {
+  #se nao estiver instalado, instala o pacote
+  install.packages(lmtest)
+  library(lmtest, character.only = TRUE)
+}
+
+print(shapiro.test(residuals(modelo_step)))
+print(lmtest::bptest(modelo_step)) 
+print(lmtest::dwtest(modelo_step))
